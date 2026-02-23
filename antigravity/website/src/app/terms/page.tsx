@@ -12,7 +12,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">1. 목적</h2>
             <p>
-              본 약관은 Antigravity AI(이하 &quot;회사&quot;)가 제공하는 AI 기반 초등 수학 학습지 생성 사이트(이하 &quot;서비스&quot;)의 이용 조건 및 절차, 이용자와 회사의 권리, 의무, 책임사항을 규정함을 목적으로 합니다.
+              본 약관은 Level-up AI(이하 &quot;회사&quot;)가 제공하는 AI 기반 초등 수학 학습지 생성 사이트(이하 &quot;서비스&quot;)의 이용 조건 및 절차, 이용자와 회사의 권리, 의무, 책임사항을 규정함을 목적으로 합니다.
             </p>
           </section>
 

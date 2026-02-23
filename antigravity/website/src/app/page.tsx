@@ -2,15 +2,6 @@
 
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  Calculator,
-  Sparkles,
-  Printer,
-  Brain,
-  ChevronRight,
-  CheckCircle2,
-  Star,
-  GraduationCap,
   Users,
   Zap,
   ArrowRight,
@@ -25,23 +16,23 @@ export default function LandingPage() {
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="bg-[#2bee6c] p-2 rounded-xl text-white group-hover:scale-105 transition-transform">
-              <Calculator size={22} />
+            <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-gray-100 shadow-sm group-hover:scale-105 transition-transform">
+              <img src="/logo.png" alt="Level-up AI Logo" className="w-full h-full object-cover" />
             </div>
-            <span className="text-xl font-extrabold tracking-tight">Antigravity<span className="text-[#2bee6c]"> AI</span></span>
+            <span className="text-xl font-extrabold tracking-tight">Level-up<span className="text-emerald-500"> AI</span></span>
           </Link>
           <div className="flex items-center gap-3">
             {user ? (
               <Link
                 href="/worksheet"
-                className="bg-[#2bee6c] hover:bg-[#25dc63] text-white font-bold py-2.5 px-5 rounded-xl transition-all text-sm flex items-center gap-1.5"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-5 rounded-xl transition-all text-sm flex items-center gap-1.5"
               >
                 학습지 생성하기 <ArrowRight size={16} />
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="bg-[#2bee6c] hover:bg-[#25dc63] text-white font-bold py-2.5 px-5 rounded-xl transition-all text-sm"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-5 rounded-xl transition-all text-sm"
               >
                 무료로 시작하기
               </Link>
@@ -54,20 +45,20 @@ export default function LandingPage() {
       <section className="relative pt-20 pb-28 px-4">
         {/* 배경 장식 */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-          <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-[#2bee6c]/5 rounded-full blur-3xl" />
-          <div className="absolute top-60 -left-40 w-[400px] h-[400px] bg-blue-50 rounded-full blur-3xl" />
+          <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-3xl" />
+          <div className="absolute top-60 -left-40 w-[400px] h-[400px] bg-teal-50 rounded-full blur-3xl" />
         </div>
 
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-[#effef5] text-[#1a8a3e] px-4 py-2 rounded-full text-sm font-semibold mb-8 border border-[#2bee6c]/20">
+          <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold mb-8 border border-emerald-500/20">
             <Sparkles size={16} />
-            AI가 매번 새로운 문제를 만들어요
+            AI가 매일매일 새로운 문제를 만들어요
           </div>
 
           <h1 className="text-5xl md:text-6xl font-black leading-tight tracking-tight text-gray-900">
-            우리 아이 수학 실력,
+            수학 실력이 레벨업 되는 마법,
             <br />
-            <span className="text-[#2bee6c]">AI 학습지</span>로 키워요
+            <span className="text-emerald-500">Level-up AI</span>
           </h1>
 
           <p className="mt-6 text-lg md:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
@@ -79,7 +70,7 @@ export default function LandingPage() {
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href={user ? "/worksheet" : "/login"}
-              className="bg-[#2bee6c] hover:bg-[#25dc63] text-white font-bold py-4 px-8 rounded-2xl text-lg transition-all shadow-lg shadow-[#2bee6c]/25 hover:shadow-xl hover:shadow-[#2bee6c]/30 flex items-center justify-center gap-2"
+              className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-8 rounded-2xl text-lg transition-all shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/30 flex items-center justify-center gap-2"
             >
               지금 바로 시작하기
               <ChevronRight size={20} />
@@ -94,9 +85,9 @@ export default function LandingPage() {
 
           {/* 신뢰 지표 */}
           <div className="mt-14 flex flex-wrap justify-center gap-6 text-sm text-gray-400">
-            <span className="flex items-center gap-1.5"><CheckCircle2 size={16} className="text-[#2bee6c]" /> 회원가입 10초 완료</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 size={16} className="text-[#2bee6c]" /> 매번 새로운 문제</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 size={16} className="text-[#2bee6c]" /> 프린트 최적화</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 size={16} className="text-emerald-500" /> 회원가입 10초 완료</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 size={16} className="text-emerald-500" /> 매번 새로운 레벨의 문제</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 size={16} className="text-emerald-500" /> 프린트 완벽 지원</span>
           </div>
         </div>
       </section>
@@ -105,17 +96,17 @@ export default function LandingPage() {
       <section id="features" className="py-24 bg-gray-50/70">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight">왜 Antigravity AI인가요?</h2>
-            <p className="mt-4 text-gray-500 text-lg">학부모님과 선생님들이 가장 많이 선택하는 이유</p>
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight">왜 Level-up AI인가요?</h2>
+            <p className="mt-4 text-gray-500 text-lg">실력 향상을 경험한 학부모님들이 강력 추천하는 이유</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
                 icon: <Brain size={28} />,
-                title: "AI 맞춤 문제 생성",
-                desc: "학년과 단원만 선택하면 Antigravity AI가 교육과정에 맞는 10문제를 즉시 생성합니다. 매번 다른 문제!",
-                color: "bg-purple-50 text-purple-600",
+                title: "AI 맞춤학습 시스템",
+                desc: "원하는 학년, 단원을 선택하면 Level-up AI가 교육과정에 완벽하게 맞는 문제를 즉시 생성합니다. 매일매일 새로운 문제로 지루할 틈이 없습니다.",
+                color: "bg-emerald-50 text-emerald-600",
               },
               {
                 icon: <Printer size={28} />,
@@ -173,7 +164,7 @@ export default function LandingPage() {
                 <ul className="space-y-1.5 text-sm text-gray-500">
                   {item.topics.map((topic, j) => (
                     <li key={j} className="flex items-center gap-2">
-                      <CheckCircle2 size={14} className="text-[#2bee6c] shrink-0" />
+                      <CheckCircle2 size={14} className="text-emerald-500 shrink-0" />
                       {topic}
                     </li>
                   ))}
@@ -229,7 +220,7 @@ export default function LandingPage() {
       {/* ─── CTA 섹션 ─── */}
       <section className="py-24">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <div className="bg-gradient-to-br from-[#2bee6c] to-[#1ec95c] p-12 md:p-16 rounded-[2rem] text-white">
+          <div className="bg-gradient-to-br from-emerald-500 to-teal-500 p-12 md:p-16 rounded-[2rem] text-white">
             <Zap size={40} className="mx-auto mb-6 opacity-80" />
             <h2 className="text-3xl md:text-4xl font-black mb-4">지금 바로 시작하세요</h2>
             <p className="text-white/80 text-lg mb-8">
@@ -239,7 +230,7 @@ export default function LandingPage() {
             </p>
             <Link
               href={user ? "/worksheet" : "/login"}
-              className="inline-flex items-center gap-2 bg-white text-[#1a8a3e] font-bold py-4 px-10 rounded-2xl text-lg hover:bg-gray-50 transition-all shadow-lg"
+              className="inline-flex items-center gap-2 bg-white text-emerald-700 font-bold py-4 px-10 rounded-2xl text-lg hover:bg-gray-50 transition-all shadow-lg"
             >
               무료로 시작하기 <ArrowRight size={20} />
             </Link>
@@ -251,15 +242,15 @@ export default function LandingPage() {
       <footer className="border-t border-gray-100 py-12">
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="bg-[#2bee6c] p-1.5 rounded-lg text-white">
-              <Calculator size={16} />
+            <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center bg-white border border-gray-100 shadow-sm">
+              <img src="/logo.png" alt="Level-up AI Logo" className="w-full h-full object-cover" />
             </div>
-            <span className="font-bold text-sm">Antigravity AI</span>
+            <span className="font-bold text-sm">Level-up AI</span>
           </div>
-          <p className="text-sm text-gray-400">© 2026 Antigravity AI. All rights reserved.</p>
+          <p className="text-sm text-gray-400">© 2026 Level-up AI. All rights reserved.</p>
           <div className="flex gap-4 text-sm text-gray-400">
             <Users size={16} />
-            <span>문의: support@antigravity.ai</span>
+            <span>문의: support@levelup-ai.com</span>
           </div>
         </div>
       </footer>

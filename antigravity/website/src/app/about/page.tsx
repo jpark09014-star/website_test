@@ -5,13 +5,13 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="bg-gradient-to-b from-blue-50 to-white py-16 px-4 sm:px-6 lg:px-8">
+      <div className="bg-gradient-to-b from-emerald-50 to-white py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl">
-            AI가 만드는 매일 새로운 <span className="text-blue-600">수학 학습지</span>
+            수학 실력을 키우는 가장 빠른 방법, <span className="text-emerald-600">Level-up AI</span>
           </h1>
           <p className="mt-6 text-xl text-gray-600">
-            Antigravity AI는 최신 인공지능 기술을 활용하여 초등학생의 수준에 맞는 수학 문제를 무한히 생성하는 서비스입니다.
+            Level-up AI는 최신 인공지능 기술을 활용하여 초등학생의 수준에 맞는 수학 문제를 무한히 생성하여, 실력을 매번 한 단계씩 레벨업 시켜주는 서비스입니다.
           </p>
         </div>
       </div>
@@ -35,8 +35,8 @@ export default function AboutPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-4">핵심 기능</h2>
             <ul className="space-y-4">
               <li className="flex items-start">
-                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center border border-blue-200 mt-1">
-                  <ArrowRight className="h-4 w-4 text-blue-600" />
+                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-emerald-100 flex items-center justify-center border border-emerald-200 mt-1">
+                  <ArrowRight className="h-4 w-4 text-emerald-600" />
                 </div>
                 <p className="ml-3 text-gray-600">
                   <strong className="text-gray-900 block">무한 문제 생성</strong>
@@ -44,8 +44,8 @@ export default function AboutPage() {
                 </p>
               </li>
               <li className="flex items-start">
-                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center border border-blue-200 mt-1">
-                  <ArrowRight className="h-4 w-4 text-blue-600" />
+                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-emerald-100 flex items-center justify-center border border-emerald-200 mt-1">
+                  <ArrowRight className="h-4 w-4 text-emerald-600" />
                 </div>
                 <p className="ml-3 text-gray-600">
                   <strong className="text-gray-900 block">채점 및 오답노트</strong>
@@ -53,8 +53,8 @@ export default function AboutPage() {
                 </p>
               </li>
               <li className="flex items-start">
-                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center border border-blue-200 mt-1">
-                  <ArrowRight className="h-4 w-4 text-blue-600" />
+                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-emerald-100 flex items-center justify-center border border-emerald-200 mt-1">
+                  <ArrowRight className="h-4 w-4 text-emerald-600" />
                 </div>
                 <p className="ml-3 text-gray-600">
                   <strong className="text-gray-900 block">학습 데이터 분석</strong>
@@ -68,9 +68,9 @@ export default function AboutPage() {
         <div className="mt-16 text-center">
           <Link
             href="/worksheet"
-            className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 md:text-lg transition-transform hover:scale-105 active:scale-95 shadow-md"
+            className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-emerald-500 hover:bg-emerald-600 md:text-lg transition-transform hover:scale-105 active:scale-95 shadow-md"
           >
-            지금 학습지 만들어보기
+            지금 무료로 시작하기
           </Link>
         </div>
       </div>

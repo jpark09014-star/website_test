@@ -10,6 +10,8 @@ import { generateProblems, TOPICS_BY_GRADE } from "@/lib/problemGenerators";
 import type { Problem, Difficulty } from "@/lib/problemGenerators";
 import { saveStudyRecord, saveWrongNotes } from "@/lib/studyStorage";
 import Navbar from "@/components/Navbar";
+import ClockFace from "@/components/ClockFace";
+import GroupingBox from "@/components/GroupingBox";
 
 // 난이도 설정 UI 라벨 + 스타일
 const DIFFICULTY_OPTIONS: { value: Difficulty; label: string; emoji: string }[] = [
@@ -346,7 +348,28 @@ export default function WorksheetPage() {
                       </div>
 
                       <div className="pt-1 w-full">
-                        <div className="text-2xl font-medium text-gray-800 tracking-wider">{problem.question}</div>
+                        <div className="text-2xl font-medium text-gray-800 tracking-wider">
+                          {problem.question}
+                        </div>
+
+                        {/* 시각적 요소 렌더링 */}
+                        {problem.visual && (
+                          <div className="mt-4 mb-2">
+                            {problem.visual.type === "clock" && (
+                              <ClockFace
+                                hour={problem.visual.hour}
+                                minute={problem.visual.minute}
+                              />
+                            )}
+                            {problem.visual.type === "grouping" && (
+                              <GroupingBox
+                                total={problem.visual.total}
+                                part1={problem.visual.part1}
+                                part2={problem.visual.part2}
+                              />
+                            )}
+                          </div>
+                        )}
 
                         {/* 정답 표시 영역 */}
                         {showAnswers && (

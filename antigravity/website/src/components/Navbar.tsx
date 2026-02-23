@@ -29,11 +29,12 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* 로고 */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="bg-[#2bee6c] p-2 rounded-xl text-white group-hover:scale-105 transition-transform">
-            <Calculator size={22} />
+          <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-gray-100 shadow-sm group-hover:scale-105 transition-transform">
+            {/* Added logo image */}
+            <img src="/logo.png" alt="Level-up AI Logo" className="w-full h-full object-cover" />
           </div>
           <span className="text-xl font-extrabold tracking-tight">
-            Antigravity<span className="text-[#2bee6c]"> AI</span>
+            Level-up<span className="text-emerald-500"> AI</span>
           </span>
         </Link>
 
@@ -47,7 +48,7 @@ export default function Navbar() {
                 href={link.href}
                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                   isActive
-                    ? "bg-[#2bee6c]/10 text-[#1a8a3e]"
+                    ? "bg-emerald-500/10 text-emerald-700"
                     : "text-gray-500 hover:text-gray-800 hover:bg-gray-50"
                 }`}
               >
@@ -100,7 +101,7 @@ export default function Navbar() {
                 onClick={() => setMobileOpen(false)}
                 className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                   isActive
-                    ? "bg-[#2bee6c]/10 text-[#1a8a3e]"
+                    ? "bg-emerald-500/10 text-emerald-700"
                     : "text-gray-500 hover:text-gray-800 hover:bg-gray-50"
                 }`}
               >

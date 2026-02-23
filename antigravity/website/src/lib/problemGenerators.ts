@@ -14,6 +14,15 @@ export interface Problem {
   id: number;
   question: string;
   answer: string; // 정답 문자열
+  visual?:
+    | { type: "clock"; hour: number; minute: number }
+    | {
+        type: "grouping",
+        category: "group" | "split",
+        total: number | "?",
+        part1: number | "?",
+        part2: number | "?",
+      };
 }
 
 // ─── 유틸리티 ────────────────────────────────────────────────
@@ -31,7 +40,7 @@ const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
 /** 중복 없는 문제를 count개 생성하는 래퍼 */
 function generateUnique(
   count: number,
-  generator: () => { key: string; question: string; answer: string },
+  generator: () => Omit<Problem, "id"> & { key: string },
   maxAttempts = 1000
 ): Problem[] {
   const seen = new Set<string>();
@@ -40,10 +49,10 @@ function generateUnique(
 
   while (problems.length < count && attempts < maxAttempts) {
     attempts++;
-    const { key, question, answer } = generator();
+    const { key, question, answer, visual } = generator();
     if (!seen.has(key)) {
       seen.add(key);
-      problems.push({ id: problems.length + 1, question, answer });
+      problems.push({ id: problems.length + 1, question, answer, visual });
     }
   }
   return problems;
@@ -106,14 +115,16 @@ function grade1Grouping(count: number, diff: Difficulty) {
     if (type === 0) {
       return {
         key: `모${part}+${total - part}`,
-        question: `${part} 와(과) ${total - part} 를 모으면? = `,
+        question: `빈칸에 알맞은 수를 써넣으세요.`,
         answer: String(total),
+        visual: { type: "grouping", category: "group", total: "?", part1: part, part2: total - part },
       };
     } else {
       return {
         key: `가${total}=${part}`,
-        question: `${total} 을(를) ${part} 와(과) ( ) 로 가르면? ( ) = `,
+        question: `빈칸에 알맞은 수를 써넣으세요.`,
         answer: String(total - part),
+        visual: { type: "grouping", category: "split", total: total, part1: part, part2: "?" },
       };
     }
   });
@@ -125,8 +136,9 @@ function grade1Clock(count: number) {
     const minute = pick([0, 30]);
     return {
       key: `${hour}:${minute}`,
-      question: `시계가 ${hour}시 ${minute === 0 ? "정각" : "30분"}을 가리킵니다. 몇 시 몇 분인가요? = `,
+      question: `시계가 가리키는 시각을 적어보세요.`,
       answer: `${hour}시 ${minute === 0 ? "정각" : "30분"}`,
+      visual: { type: "clock", hour, minute },
     };
   });
 }

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Antigravity AI - 초등 수학 학습지 생성기",
+  title: "Level-up AI - 초등 수학 학습지 생성기",
   description:
     "AI가 매번 새로운 초등학교 수학 문제를 생성합니다. 1~6학년 교육과정에 맞춘 학습지를 바로 인쇄하세요.",
 };
