@@ -2,6 +2,14 @@
 
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  Sparkles,
+  Printer,
+  Brain,
+  ChevronRight,
+  CheckCircle2,
+  Star,
+  GraduationCap,
   Users,
   Zap,
   ArrowRight,
