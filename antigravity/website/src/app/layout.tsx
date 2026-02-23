@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   title: "Level-up AI - 초등 수학 학습지 생성기",
   description:
     "AI가 매번 새로운 초등학교 수학 문제를 생성합니다. 1~6학년 교육과정에 맞춘 학습지를 바로 인쇄하세요.",
+  other: {
+    "google-adsense-account": "ca-pub-8347182628751367",
+  },
 };
 
 export default function RootLayout({
@@ -29,14 +32,12 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        {process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID && (
-          <Script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID}`}
-            crossOrigin="anonymous"
-            strategy="lazyOnload"
-          />
-        )}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8347182628751367"
+          crossOrigin="anonymous"
+          strategy="lazyOnload"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
