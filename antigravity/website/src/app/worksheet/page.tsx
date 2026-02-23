@@ -1,150 +1,202 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import {
-  Printer, RefreshCw, BookOpen, GraduationCap,
+  Printer, RefreshCw, BookOpen,
   ChevronDown, Eye, EyeOff, CheckCircle, XCircle,
   ClipboardCheck, RotateCcw, Sparkles,
 } from "lucide-react";
-import { generateProblems, TOPICS_BY_GRADE } from "@/lib/problemGenerators";
+import { generateProblems, CURRICULUM_HIERARCHY } from "@/lib/problemGenerators";
 import type { Problem, Difficulty } from "@/lib/problemGenerators";
 import { saveStudyRecord, saveWrongNotes } from "@/lib/studyStorage";
 import Navbar from "@/components/Navbar";
-import ClockFace from "@/components/ClockFace";
-import GroupingBox from "@/components/GroupingBox";
 
-// 난이도 설정 UI 라벨 + 스타일
 const DIFFICULTY_OPTIONS: { value: Difficulty; label: string; emoji: string }[] = [
   { value: "easy", label: "쉬움", emoji: "🌱" },
   { value: "normal", label: "보통", emoji: "📘" },
   { value: "hard", label: "어려움", emoji: "🔥" },
 ];
 
-// 문제 수 옵션
-const COUNT_OPTIONS = [5, 10, 20];
+const COUNT_OPTIONS = [10, 20, 30];
 
 export default function WorksheetPage() {
-  const [selectedGrade, setSelectedGrade] = useState<number>(1);
-  const [selectedTopic, setSelectedTopic] = useState<string>(TOPICS_BY_GRADE[1][0]);
+  const [selectedGrade, setSelectedGrade] = useState<number>(2);
+
+  // Lazy initialize term/unit and topic to avoid mount-time cascading renders
+  const [selectedTermUnit, setSelectedTermUnit] = useState<string>(() => {
+    const units = CURRICULUM_HIERARCHY[2] || [];
+    return units.length > 0 ? units[0].termUnit : "";
+  });
+  const [selectedTopic, setSelectedTopic] = useState<string>(() => {
+    const units = CURRICULUM_HIERARCHY[2] || [];
+    return units.length > 0 && units[0].topics.length > 0 ? units[0].topics[0].name : "";
+  });
+  
   const [difficulty, setDifficulty] = useState<Difficulty>("normal");
-  const [problemCount, setProblemCount] = useState<number>(10);
-  const [worksheet, setWorksheet] = useState<Problem[]>([]);
+  const [problemCount, setProblemCount] = useState<number>(20);
+  
+  // Lazy initialize the worksheet right away instead of updating via effect
+  const [worksheet, setWorksheet] = useState<Problem[]>(() => {
+    const units = CURRICULUM_HIERARCHY[2] || [];
+    const term = units.length > 0 ? units[0].termUnit : "";
+    const topic = units.length > 0 && units[0].topics.length > 0 ? units[0].topics[0].name : "";
+    if (term && topic) {
+      return generateProblems(2, term, topic, 20, "normal");
+    }
+    return [];
+  });
   const [isGenerating, setIsGenerating] = useState(false);
   const [showAnswers, setShowAnswers] = useState(false);
 
-  // 채점 모드 관련 상태
   const [gradingMode, setGradingMode] = useState(false);
   const [graded, setGraded] = useState<Record<number, "correct" | "wrong">>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // 초기 문제 생성
-  useEffect(() => {
-    setWorksheet(generateProblems(1, TOPICS_BY_GRADE[1][0], 10, "normal"));
+  // 학년 변경 시 단원/주제 동기화 
+  const syncTopicHierarchy = useCallback((grade: number) => {
+    const units = CURRICULUM_HIERARCHY[grade] || [];
+    if (units.length > 0) {
+      setSelectedTermUnit(units[0].termUnit);
+      if (units[0].topics.length > 0) {
+        setSelectedTopic(units[0].topics[0].name);
+      }
+    } else {
+      setSelectedTermUnit("");
+      setSelectedTopic("");
+    }
   }, []);
 
+  const handleGradeTabClick = (grade: number) => {
+    setSelectedGrade(grade);
+    syncTopicHierarchy(grade);
+  };
+
+  // 단원 변경 시 주제 동기화
+  const handleTermUnitChange = (termUnit: string) => {
+    setSelectedTermUnit(termUnit);
+    const units = CURRICULUM_HIERARCHY[selectedGrade] || [];
+    const unit = units.find((u: { termUnit: string }) => u.termUnit === termUnit);
+    if (unit && unit.topics.length > 0) {
+      setSelectedTopic(unit.topics[0].name);
+    }
+  };
+
   const handleGenerate = useCallback(() => {
+    if (!selectedTermUnit || !selectedTopic) return;
     setIsGenerating(true);
-    // 채점 상태 리셋
     setGradingMode(false);
     setGraded({});
     setIsSubmitted(false);
     setShowAnswers(false);
 
     setTimeout(() => {
-      setWorksheet(generateProblems(selectedGrade, selectedTopic, problemCount, difficulty));
+      setWorksheet(generateProblems(selectedGrade, selectedTermUnit, selectedTopic, problemCount, difficulty));
       setIsGenerating(false);
     }, 600);
-  }, [selectedGrade, selectedTopic, problemCount, difficulty]);
+  }, [selectedGrade, selectedTermUnit, selectedTopic, problemCount, difficulty]);
 
   const handlePrint = () => window.print();
 
-  const handleGradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const grade = parseInt(e.target.value);
-    setSelectedGrade(grade);
-    setSelectedTopic(TOPICS_BY_GRADE[grade][0]);
-  };
-
-  // 채점 토글 (문제별 ✓ / ✗)
   const toggleGrading = (problemId: number) => {
-    if (isSubmitted) return; // 이미 제출 완료면 변경 불가
+    if (isSubmitted) return; 
     setGraded((prev) => {
       const current = prev[problemId];
       if (!current) return { ...prev, [problemId]: "correct" };
       if (current === "correct") return { ...prev, [problemId]: "wrong" };
-      // wrong → 삭제 (다시 미채점)
       const next = { ...prev };
       delete next[problemId];
       return next;
     });
   };
 
-  // 채점 결과 제출 (학습 이력, 오답 저장)
   const handleSubmitGrading = () => {
     const correctCount = Object.values(graded).filter((v) => v === "correct").length;
     const wrongProblems = worksheet.filter((p) => graded[p.id] === "wrong");
 
-    // 학습 이력 저장
-    saveStudyRecord(selectedGrade, selectedTopic, difficulty, worksheet.length, correctCount);
+    saveStudyRecord(selectedGrade, `${selectedTermUnit} - ${selectedTopic}`, difficulty, worksheet.length, correctCount);
 
-    // 오답 저장
     if (wrongProblems.length > 0) {
-      saveWrongNotes(selectedGrade, selectedTopic, wrongProblems);
+      saveWrongNotes(selectedGrade, `${selectedTermUnit} - ${selectedTopic}`, wrongProblems);
     }
-
     setIsSubmitted(true);
   };
 
-  // 채점 완료 여부 확인 (모든 문제가 채점되었는지)
   const allGraded = worksheet.length > 0 && Object.keys(graded).length === worksheet.length;
   const correctCount = Object.values(graded).filter((v) => v === "correct").length;
   const wrongCount = Object.values(graded).filter((v) => v === "wrong").length;
 
+  const currentUnits = CURRICULUM_HIERARCHY[selectedGrade] || [];
+  const currentTopics = currentUnits.find((u: { termUnit: string }) => u.termUnit === selectedTermUnit)?.topics || [];
+
+  // 공통 지시문 추출 (첫 번째 문제 기준)
+  const commonInstruction = worksheet.length > 0 ? worksheet[0].instruction : "";
+
   return (
     <div className="min-h-screen bg-[#f8fbfa] font-sans selection:bg-[#2bee6c]/30">
-      {/* 공통 네비게이션 */}
       <Navbar />
 
+      {/* 학년 선택 탭 (가로 형태) - 인쇄 시 숨김 */}
+      <div className="bg-white border-b border-gray-200 print:hidden overflow-x-auto">
+        <div className="max-w-6xl mx-auto px-4 flex">
+          {[1, 2, 3, 4, 5, 6].map((grade) => (
+            <button
+              key={grade}
+              onClick={() => handleGradeTabClick(grade)}
+              className={`px-6 py-4 font-bold whitespace-nowrap transition-colors border-b-4 ${
+                selectedGrade === grade 
+                  ? "border-[#2bee6c] text-[#1f8742] bg-[#effef5]/50" 
+                  : "border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              {grade}학년
+            </button>
+          ))}
+        </div>
+      </div>
+
       <main className="max-w-6xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+        
         {/* ─── 컨트롤 패널 (인쇄 시 숨김) ─── */}
         <aside className="w-full lg:w-80 shrink-0 print:hidden space-y-6">
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
             <h2 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
               <BookOpen className="text-[#2bee6c]" size={20} />
-              학습지 설정
+              학습지 상세 설정
             </h2>
 
             <div className="space-y-5">
-              {/* 학년 선택 */}
+              
+              {/* 학기 / 단원 선택 */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-600 block">학년 선택</label>
+                <label className="text-sm font-medium text-gray-600 block">학기 및 단원</label>
                 <div className="relative">
                   <select
-                    value={selectedGrade}
-                    onChange={handleGradeChange}
-                    className="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-800 px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#2bee6c]/50 transition-all font-medium"
+                    value={selectedTermUnit}
+                    onChange={(e) => handleTermUnitChange(e.target.value)}
+                    className="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-800 px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#2bee6c]/50 transition-all font-medium text-sm"
                   >
-                    {[1, 2, 3, 4, 5, 6].map((g) => (
-                      <option key={g} value={g}>초등학교 {g}학년</option>
+                    {currentUnits.map((unit: { termUnit: string }) => (
+                      <option key={unit.termUnit} value={unit.termUnit}>{unit.termUnit}</option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
                 </div>
               </div>
 
-              {/* 단원 선택 */}
+              {/* 세부 주제 선택 */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-600 block">단원 / 학습 주제</label>
+                <label className="text-sm font-medium text-gray-600 block">세부 학습 주제</label>
                 <div className="relative">
                   <select
                     value={selectedTopic}
                     onChange={(e) => setSelectedTopic(e.target.value)}
-                    className="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-800 px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#2bee6c]/50 transition-all font-medium"
+                    className="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-800 px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#2bee6c]/50 transition-all font-medium text-sm"
                   >
-                    {TOPICS_BY_GRADE[selectedGrade].map((topic) => (
-                      <option key={topic} value={topic}>{topic}</option>
+                    {currentTopics.map((topic: { name: string }) => (
+                      <option key={topic.name} value={topic.name}>{topic.name}</option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
                 </div>
               </div>
 
@@ -156,7 +208,7 @@ export default function WorksheetPage() {
                     <button
                       key={opt.value}
                       onClick={() => setDifficulty(opt.value)}
-                      className={`py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                      className={`py-2 rounded-xl text-sm font-semibold transition-all ${
                         difficulty === opt.value
                           ? "bg-[#2bee6c] text-white shadow-md shadow-[#2bee6c]/20"
                           : "bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200"
@@ -176,7 +228,7 @@ export default function WorksheetPage() {
                     <button
                       key={cnt}
                       onClick={() => setProblemCount(cnt)}
-                      className={`py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                      className={`py-2 rounded-xl text-sm font-semibold transition-all ${
                         problemCount === cnt
                           ? "bg-[#2bee6c] text-white shadow-md shadow-[#2bee6c]/20"
                           : "bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200"
@@ -239,10 +291,11 @@ export default function WorksheetPage() {
             </div>
           </div>
 
-          {/* 채점 결과 카드 (채점 모드일 때만) */}
+          {/* 채점 결과 카드 */}
           {gradingMode && (
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-              <h3 className="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+               {/* ... (생략 없이 작성) ... */}
+               <h3 className="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
                 <ClipboardCheck className="text-amber-500" size={18} />
                 채점 현황
               </h3>
@@ -289,50 +342,44 @@ export default function WorksheetPage() {
               )}
             </div>
           )}
-
-          {/* 학습 가이드 (채점 모드 아닐 때) */}
-          {!gradingMode && (
-            <div className="bg-[#effef5] p-6 rounded-3xl border border-[#2bee6c]/20 text-sm text-[#1f8742] leading-relaxed">
-              <h3 className="font-bold mb-2 flex items-center gap-2">
-                <GraduationCap size={18} />
-                학습 가이드
-              </h3>
-              <p>1. 학년, 단원, 난이도, 문제 수를 선택하세요.</p>
-              <p className="mt-1">2. <strong>&apos;새로운 문제 생성&apos;</strong>을 누르면 매번 새로운 문제가 만들어집니다.</p>
-              <p className="mt-1">3. <strong>&apos;채점 모드&apos;</strong>로 맞은 문제와 틀린 문제를 기록할 수 있어요.</p>
-              <p className="mt-1">4. 오답은 자동으로 <strong>오답노트</strong>에 저장됩니다.</p>
-            </div>
-          )}
         </aside>
 
         {/* ─── 학습지 표시 영역 ─── */}
-        <section className="flex-1">
-          <div className="bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-gray-100 print:shadow-none print:border-none print:p-0 min-h-[800px]">
-            {/* 인쇄용 헤더 */}
-            <div className="border-b-2 border-gray-800 pb-4 mb-8 flex justify-between items-end">
-              <div>
-                <h2 className="text-3xl font-bold text-gray-800 font-serif tracking-tight">Antigravity AI 수학 학습지</h2>
-                <p className="text-xl text-gray-600 mt-2 font-medium bg-[#2bee6c]/10 inline-block px-3 py-1 rounded-lg">
-                  초등학교 {selectedGrade}학년 - {selectedTopic}
-                  <span className="ml-2 text-sm text-gray-400">
-                    ({DIFFICULTY_OPTIONS.find(d => d.value === difficulty)?.label} · {problemCount}문제)
-                  </span>
-                </p>
+        <section className="flex-1 w-full max-w-[800px] print:max-w-none print:w-full mx-auto">
+          <div className="bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-gray-100 print:shadow-none print:border-none print:p-0 min-h-[1000px]">
+            
+            {/* 인쇄용 학습지 헤더 */}
+            <div className="border border-gray-800 p-4 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div className="flex items-center gap-4">
+                <div className="text-center font-bold font-serif leading-tight">
+                  <div className="text-3xl tracking-tighter">Level-up AI</div>
+                  <div className="text-sm tracking-widest text-gray-500 mt-1">levelup-ai.com</div>
+                </div>
+                <div className="border-l border-gray-300 pl-4">
+                  <div className="text-sm text-gray-500">{selectedGrade}학년 {selectedTermUnit}</div>
+                  <div className="text-xl font-bold text-gray-800 mt-1">{selectedTopic}</div>
+                </div>
               </div>
-              <div className="text-right space-y-2">
-                <div className="text-lg font-medium text-gray-700">이름: <span className="inline-block w-40 border-b border-gray-400"></span></div>
-                <div className="text-lg font-medium text-gray-700">날짜: <span className="inline-block w-40 border-b border-gray-400"></span></div>
-                <div className="text-lg font-medium text-gray-700">점수: <span className="inline-block w-40 border-b border-gray-400"></span></div>
+              <div className="flex gap-4">
+                <div className="text-lg font-medium text-gray-700 flex items-center gap-2">점수: <span className="inline-block w-20 border-b border-gray-400"></span></div>
+                <div className="text-lg font-medium text-gray-700 flex items-center gap-2">이름: <span className="inline-block w-24 border-b border-gray-400"></span></div>
               </div>
             </div>
 
-            {/* 문제 리스트 */}
-            <div className={`grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 print:grid-cols-2 transition-opacity duration-300 ${isGenerating ? "opacity-40" : "opacity-100"}`}>
+            {/* 공통 지시문 */}
+            {commonInstruction && (
+              <h3 className="text-xl font-bold text-gray-800 mb-8 print:mb-6">
+                {commonInstruction}
+              </h3>
+            )}
+
+            {/* 문제 리스트 (Grid) */}
+            <div className={`grid grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-6 print:grid-cols-4 transition-opacity duration-300 ${isGenerating ? "opacity-40" : "opacity-100"}`}>
               {worksheet.length > 0
                 ? worksheet.map((problem) => (
                     <div
                       key={problem.id}
-                      className={`group relative flex items-start gap-4 p-4 rounded-2xl transition-colors print:hover:bg-transparent ${
+                      className={`group relative flex flex-col items-center p-2 rounded-xl transition-colors print:p-0 ${
                         gradingMode
                           ? graded[problem.id] === "correct"
                             ? "bg-green-50 border border-green-200"
@@ -343,88 +390,98 @@ export default function WorksheetPage() {
                       }`}
                     >
                       {/* 문제 번호 */}
-                      <div className="w-10 h-10 shrink-0 bg-[#2bee6c]/10 text-[#1f8742] rounded-full flex items-center justify-center font-bold text-lg font-mono print:bg-transparent print:border print:border-gray-300 print:text-gray-800">
+                      <div className="absolute top-0 left-0 w-6 h-6 flex items-center justify-center rounded-full border border-gray-300 text-xs font-bold text-gray-500 bg-white">
                         {problem.id}
                       </div>
 
-                      <div className="pt-1 w-full">
-                        <div className="text-2xl font-medium text-gray-800 tracking-wider">
-                          {problem.question}
-                        </div>
-
-                        {/* 시각적 요소 렌더링 */}
-                        {problem.visual && (
-                          <div className="mt-4 mb-2">
-                            {problem.visual.type === "clock" && (
-                              <ClockFace
-                                hour={problem.visual.hour}
-                                minute={problem.visual.minute}
-                              />
-                            )}
-                            {problem.visual.type === "grouping" && (
-                              <GroupingBox
-                                total={problem.visual.total}
-                                part1={problem.visual.part1}
-                                part2={problem.visual.part2}
-                              />
+                      {/* 수학 렌더링 영역 */}
+                      <div className="mt-4 flex flex-col items-center justify-center h-32 w-full text-2xl font-medium text-gray-800 font-serif">
+                        
+                        {/* 1. 세로셈 렌더링 */}
+                        {problem.visual?.type === "vertical_math" && (
+                          <div className="flex flex-col items-end text-3xl tracking-[0.2em] leading-tight w-24">
+                            <div>{problem.visual.top}</div>
+                            <div className="flex w-full justify-between items-center border-b-[3px] border-gray-800 pb-1 mb-2">
+                              <span>{problem.visual.operator}</span>
+                              <span>{problem.visual.bottom}</span>
+                            </div>
+                            {/* 정답 표시용 공간 혹은 정답 텍스트 */}
+                            {showAnswers ? (
+                              <div className="text-[#2bee6c] w-full text-right">{problem.answer}</div>
+                            ) : (
+                              <div className="h-8"></div> // 풀이 여백
                             )}
                           </div>
                         )}
 
-                        {/* 정답 표시 영역 */}
-                        {showAnswers && (
-                          <div className="mt-2 text-lg font-bold text-[#2bee6c] bg-[#effef5] px-3 py-1.5 rounded-xl inline-block print:hidden transition-all animate-[fadeIn_0.2s_ease]">
-                            정답: {problem.answer}
+                        {/* 2. 분수 렌더링 */}
+                        {problem.visual?.type === "fraction" && (
+                          <div className="flex items-center gap-2 text-2xl">
+                            {problem.visual.whole && (
+                              <div className="text-3xl">{problem.visual.whole}</div>
+                            )}
+                            <div className="flex flex-col items-center text-xl font-bold px-1">
+                              <div>{problem.visual.numerator}</div>
+                              <div className="w-full h-px bg-gray-800 my-0.5"></div>
+                              <div>{problem.visual.denominator}</div>
+                            </div>
+                            <div className="mx-2">=</div>
+                            {showAnswers ? (
+                              <div className="text-[#2bee6c]">{problem.answer}</div>
+                            ) : (
+                              <div className="w-16 h-8 border-b border-dashed border-gray-400"></div>
+                            )}
                           </div>
                         )}
 
-                        {/* 풀이 공간 */}
-                        <div className="h-20 md:h-24 w-full mt-3 border-b border-dashed border-gray-200 print:border-gray-300"></div>
+                        {/* 3. 기타 렌더링 영역 (시계 등) - 기존 형태 유지 */}
+                        {(!problem.visual || (problem.visual.type !== "vertical_math" && problem.visual.type !== "fraction")) && (
+                           <div className="w-full text-center">
+                              {problem.question}
+                              {showAnswers ? (
+                                <div className="text-[#2bee6c] mt-2 text-lg inline-block px-2 py-0.5 bg-[#effef5] rounded">{problem.answer}</div>
+                              ) : (
+                                <div className="mt-4 border-b border-dashed border-gray-300 w-full h-8"></div>
+                              )}
+                           </div>
+                        )}
                       </div>
 
-                      {/* 채점 버튼 (채점 모드일 때만) */}
+                      {/* 채점 버튼 (마우스 오버나 채점 모드 시 표시) */}
                       {gradingMode && !isSubmitted && (
-                        <button
-                          onClick={() => toggleGrading(problem.id)}
-                          className="shrink-0 mt-1 print:hidden"
-                          title="클릭하여 채점 (✓ → ✗ → 미채점)"
-                        >
-                          {graded[problem.id] === "correct" ? (
-                            <CheckCircle size={28} className="text-green-500" />
-                          ) : graded[problem.id] === "wrong" ? (
-                            <XCircle size={28} className="text-red-500" />
-                          ) : (
-                            <div className="w-7 h-7 rounded-full border-2 border-gray-300 hover:border-gray-400 transition-colors" />
-                          )}
-                        </button>
-                      )}
-
-                      {/* 제출 후 채점 결과 표시 */}
-                      {gradingMode && isSubmitted && (
-                        <div className="shrink-0 mt-1 print:hidden">
-                          {graded[problem.id] === "correct" ? (
-                            <CheckCircle size={28} className="text-green-500" />
-                          ) : (
-                            <XCircle size={28} className="text-red-500" />
-                          )}
+                        <div className="mt-2 flex gap-2 print:hidden">
+                           <button
+                             onClick={() => toggleGrading(problem.id)}
+                             className="shrink-0"
+                             title="채점"
+                           >
+                             {graded[problem.id] === "correct" ? (
+                               <CheckCircle size={24} className="text-green-500" />
+                             ) : graded[problem.id] === "wrong" ? (
+                               <XCircle size={24} className="text-red-500" />
+                             ) : (
+                               <div className="w-6 h-6 rounded-full border-2 border-gray-300 hover:border-gray-400" />
+                             )}
+                           </button>
                         </div>
                       )}
                     </div>
                   ))
-                : Array.from({ length: problemCount }).map((_, i) => (
-                    <div key={i} className="flex items-start gap-4 p-4 print:hidden">
-                      <div className="w-10 h-10 shrink-0 bg-gray-100 rounded-full animate-pulse"></div>
-                      <div className="pt-1 w-full space-y-4">
-                        <div className="h-8 bg-gray-100 rounded w-1/2 animate-pulse"></div>
-                        <div className="h-20 md:h-24 w-full border-b border-dashed border-gray-200"></div>
-                      </div>
+                : 
+                // 생성 중일 때 스켈레톤 UI
+                Array.from({ length: 20 }).map((_, i) => (
+                    <div key={i} className="flex flex-col items-center p-2 opacity-50 print:hidden">
+                      <div className="w-6 h-6 self-start bg-gray-200 rounded-full mb-4"></div>
+                      <div className="w-20 h-8 bg-gray-200 rounded mb-2"></div>
+                      <div className="w-24 border-b-4 border-gray-200 mb-2"></div>
+                      <div className="w-16 h-8 bg-gray-200 rounded"></div>
                     </div>
                   ))}
             </div>
 
             {/* 인쇄 전용 푸터 */}
-            <div className="mt-16 pt-8 border-t border-gray-200 text-center text-gray-400 text-sm hidden print:block">
-              Antigravity AI Math Generator | 본 학습지의 저작권은 작성자에게 있습니다.
+            <div className="mt-16 pt-4 border-t border-gray-300 text-center text-gray-500 text-xs hidden print:block">
+              Level-up AI Math Generator | 본 학습지의 저작권은 작성자에게 있습니다.
             </div>
           </div>
         </section>

@@ -21,7 +21,7 @@ body {
 /* Print specific styles for the worksheet */
 @media print {
   @page {
-    margin: 1.5cm;
+    margin: 1cm;
     size: A4;
   }
   
@@ -29,5 +29,11 @@ body {
     background-color: white !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+
+  /* Prevent problems from breaking across pages */
+  .grid > div {
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
 }
