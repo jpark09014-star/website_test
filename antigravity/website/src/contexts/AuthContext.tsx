@@ -43,6 +43,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithGoogle = async () => {
+    // 1. 인앱 브라우저 감지 (카카오톡, 네이버, 인스타그램 등)
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isKakao = userAgent.match(/kakaotalk/i);
+    const isInApp = userAgent.match(/inapp|naver|snapchat|line|kakaostory|band|instagram|facebook/i);
+
+    // 2. 카카오톡 내부 브라우저인 경우 강제로 외부 브라우저 호출
+    if (isKakao) {
+      window.location.href = `kakaotalk://web/openExternal?url=${encodeURIComponent(window.location.href)}`;
+      return;
+    } 
+    // 3. 그 외 인앱 브라우저인 경우 사용자에게 안내
+    else if (isInApp) {
+      alert(
+        "보안 정책(403)으로 인해 현재 앱 내부에서는 구글 로그인을 할 수 없습니다.\n\n" +
+        "오른쪽 상단 또는 하단의 [⠇] 메뉴를 눌러 '다른 브라우저(Safari/Chrome)로 열기'를 선택해주세요!"
+      );
+      return;
+    }
+
+    // 4. 정상적인 시스템 외부 브라우저일 때만 팝업 실행
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (error) {
