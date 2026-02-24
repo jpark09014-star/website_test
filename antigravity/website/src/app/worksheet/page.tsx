@@ -10,6 +10,9 @@ import { generateProblems, CURRICULUM_HIERARCHY } from "@/lib/problemGenerators"
 import type { Problem, Difficulty } from "@/lib/problemGenerators";
 import { saveStudyRecord, saveWrongNotes } from "@/lib/studyStorage";
 import Navbar from "@/components/Navbar";
+import ShapeRenderer from "@/components/ShapeRenderer";
+import MathRenderer from "@/components/MathRenderer";
+import ClockFace from "@/components/ClockFace";
 
 const DIFFICULTY_OPTIONS: { value: Difficulty; label: string; emoji: string }[] = [
   { value: "easy", label: "쉬움", emoji: "🌱" },
@@ -373,8 +376,8 @@ export default function WorksheetPage() {
               </h3>
             )}
 
-            {/* 문제 리스트 (Grid) */}
-            <div className={`grid grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-6 print:grid-cols-4 transition-opacity duration-300 ${isGenerating ? "opacity-40" : "opacity-100"}`}>
+            {/* 문제 리스트 (Grid) — 항상 4열을 유지하여 한 페이지에 많은 문제를 표시 */}
+            <div className={`grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-4 print:grid-cols-4 transition-opacity duration-300 ${isGenerating ? "opacity-40" : "opacity-100"}`}>
               {worksheet.length > 0
                 ? worksheet.map((problem) => (
                     <div
@@ -395,7 +398,7 @@ export default function WorksheetPage() {
                       </div>
 
                       {/* 수학 렌더링 영역 */}
-                      <div className="mt-4 flex flex-col items-center justify-center h-32 w-full text-2xl font-medium text-gray-800 font-serif">
+                      <div className="mt-4 flex flex-col items-center justify-center h-32 w-full text-2xl font-medium text-gray-800 font-serif overflow-hidden">
                         
                         {/* 1. 세로셈 렌더링 */}
                         {problem.visual?.type === "vertical_math" && (
@@ -434,14 +437,95 @@ export default function WorksheetPage() {
                           </div>
                         )}
 
-                        {/* 3. 기타 렌더링 영역 (시계 등) - 기존 형태 유지 */}
-                        {(!problem.visual || (problem.visual.type !== "vertical_math" && problem.visual.type !== "fraction")) && (
-                           <div className="w-full text-center">
-                              {problem.question}
+                        {/* 3. 도형 렌더링 — visual.type === "shape" (컴팩트) */}
+                        {problem.visual?.type === "shape" && (
+                          <div className="w-full flex flex-col items-center">
+                            <div className="max-w-[70px] max-h-[50px]">
+                              <ShapeRenderer visual={problem.visual} />
+                            </div>
+                            <div className="text-[10px] leading-tight text-center mt-0.5 text-gray-700 line-clamp-2">{problem.question}</div>
+                            {showAnswers && (
+                              <div className="text-[#2bee6c] text-xs font-bold mt-0.5">{problem.answer}</div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* 4. 객관식 렌더링 — choices 있는 문제 (컴팩트) */}
+                        {!problem.visual && problem.choices && problem.choices.length > 0 && (
+                          <div className="w-full text-center">
+                            <div className="text-[10px] leading-tight mb-1.5 line-clamp-2">{problem.question}</div>
+                            <div className="flex flex-col gap-0.5 items-start text-[10px]">
+                              {problem.choices.map((choice, idx) => {
+                                const circledNum = ["\u2460", "\u2461", "\u2462", "\u2463", "\u2464"][idx] || `(${idx + 1})`;
+                                const isCorrect = showAnswers && choice === problem.answer;
+                                return (
+                                  <div
+                                    key={idx}
+                                    className={`px-1 py-0 rounded ${
+                                      isCorrect
+                                        ? "bg-[#effef5] text-[#1a8a3e] font-bold"
+                                        : "text-gray-700"
+                                    }`}
+                                  >
+                                    {circledNum} {choice}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 5. 시계 렌더링 */}
+                        {problem.visual?.type === "clock" && (
+                          <div className="w-full flex flex-col items-center">
+                            <ClockFace hour={problem.visual.hour} minute={problem.visual.minute} />
+                            {showAnswers ? (
+                              <div className="text-[#2bee6c] text-base mt-2 font-bold">{problem.answer}</div>
+                            ) : (
+                              <div className="mt-4 border-b border-dashed border-gray-300 w-16 h-6"></div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* 6. 분할/모으기 렌더링 */}
+                        {problem.visual?.type === "grouping" && (
+                           <div className="flex flex-col items-center w-full">
+                             <div className="border border-gray-400 rounded-lg px-6 py-2 mb-2 text-2xl font-bold bg-white shadow-sm">
+                               {problem.visual.total}
+                             </div>
+                             <div className="flex w-full justify-center px-4">
+                               <div className="w-1/2 h-8 border-r border-t border-gray-400"></div>
+                               <div className="w-1/2 h-8 border-l border-t border-gray-400"></div>
+                             </div>
+                             <div className="flex w-full justify-between px-8 text-2xl font-bold gap-4">
+                               <div className="border border-gray-400 rounded-lg px-4 py-2 bg-white shadow-sm text-center">
+                                 {problem.visual.part1}
+                               </div>
+                               <div className="border border-gray-400 rounded-lg px-4 py-2 bg-white shadow-sm text-center">
+                                 {problem.visual.part2}
+                               </div>
+                             </div>
+                             {showAnswers ? (
+                               <div className="text-[#2bee6c] mt-2 font-bold">{problem.answer}</div>
+                             ) : (
+                               <div className="mt-2 text-transparent select-none">여백</div>
+                             )}
+                           </div>
+                        )}
+
+                        {/* 7. 기타 렌더링 (일반 텍스트 + 선택적 KaTeX) */}
+                        {(!problem.visual || (problem.visual.type !== "vertical_math" && problem.visual.type !== "fraction" && problem.visual.type !== "shape" && problem.visual.type !== "clock" && problem.visual.type !== "grouping")) && !(problem.choices && problem.choices.length > 0 && !problem.visual) && (
+                           <div className="w-full flex flex-col items-center justify-center">
+                              <div className="text-sm leading-snug text-center">{problem.question}</div>
+                              {problem.equation && (
+                                <div className="mt-0.5 text-xs">
+                                  <MathRenderer equation={problem.equation} />
+                                </div>
+                              )}
                               {showAnswers ? (
-                                <div className="text-[#2bee6c] mt-2 text-lg inline-block px-2 py-0.5 bg-[#effef5] rounded">{problem.answer}</div>
+                                <div className="text-[#2bee6c] mt-1 text-sm inline-block px-2 py-0.5 bg-[#effef5] rounded">{problem.answer}</div>
                               ) : (
-                                <div className="mt-4 border-b border-dashed border-gray-300 w-full h-8"></div>
+                                <div className="mt-2 border-b border-dashed border-gray-300 w-full max-w-[100px] h-6"></div>
                               )}
                            </div>
                         )}
