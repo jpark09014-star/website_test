@@ -111,7 +111,7 @@ export function gen3_shapeBasic(count: number, diff: Difficulty = "normal") {
         visual: {
           type: "shape" as const,
           shape: "rectangle" as const,
-          dimensions: { width: w, height: h },
+          dimensions: { width: w, height: h } as Record<string, number>,
           unit: "cm",
         },
       };
@@ -267,7 +267,7 @@ export function gen5_area(count: number, diff: Difficulty = "normal") {
         visual: {
           type: "shape" as const,
           shape: "rectangle" as const,
-          dimensions: { width: w, height: h },
+          dimensions: { width: w, height: h } as Record<string, number>,
           unit: "cm",
         },
       };
@@ -289,7 +289,7 @@ export function gen5_area(count: number, diff: Difficulty = "normal") {
         visual: {
           type: "shape" as const,
           shape: "triangle" as const,
-          dimensions: { base: adjustedBase, height },
+          dimensions: { base: adjustedBase, height } as Record<string, number>,
           unit: "cm",
         },
       };

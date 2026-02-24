@@ -502,6 +502,7 @@ function convertMixedToImproper(count: number) {
       instruction: "대분수를 가분수로 나타내어 보세요.",
       question: `${whole}과 ${numer}/${denom} = `,
       answer: `${improperNumer}/${denom}`,
+      equation: `${whole}\\frac{${numer}}{${denom}} = `,
       visual: { type: "fraction" as const, whole, numerator: numer, denominator: denom },
     };
   });
@@ -518,6 +519,7 @@ function convertImproperToMixed(count: number) {
       instruction: "가분수를 대분수로 나타내어 보세요.",
       question: `${improperNumer}/${denom} = `,
       answer: `${whole}과 ${numer}/${denom}`,
+      equation: `\\frac{${improperNumer}}{${denom}} = `,
       visual: { type: "fraction" as const, numerator: improperNumer, denominator: denom },
     };
   });
@@ -531,8 +533,9 @@ function gen3_fracDecIntro(count: number) {
     return {
       key: `fracintro_${numer}/${denom}`,
       instruction: "색칠된 부분을 분수로 나타내세요.",
-      question: `전체 ${denom}칸 중 ${numer}칸 =/□`,
+      question: `전체 ${denom}칸 중 ${numer}칸 =`,
       answer: `${numer}/${denom}`,
+      equation: `\\frac{${numer}}{${denom}}`,
     };
   });
 }
@@ -650,6 +653,7 @@ function gen4_fracAdd(count: number) {
       instruction: "분수의 덧셈을 하세요.",
       question: `${n1}/${denom} + ${n2}/${denom} = `,
       answer: `${n1 + n2}/${denom}`,
+      equation: `\\frac{${n1}}{${denom}} + \\frac{${n2}}{${denom}} = `,
     };
   });
 }
@@ -665,6 +669,7 @@ function gen4_fracSub(count: number) {
       instruction: "분수의 뺄셈을 하세요.",
       question: `${n1}/${denom} - ${n2}/${denom} = `,
       answer: `${n1 - n2}/${denom}`,
+      equation: `\\frac{${n1}}{${denom}} - \\frac{${n2}}{${denom}} = `,
     };
   });
 }
@@ -812,6 +817,7 @@ function gen5_fracAddDiffDenom(count: number) {
       instruction: "통분하여 분수의 덧셈을 하세요.",
       question: `${n1}/${d1} + ${n2}/${d2} = `,
       answer: `${result}/${commonD}`,
+      equation: `\\frac{${n1}}{${d1}} + \\frac{${n2}}{${d2}} = `,
     };
   });
 }
@@ -845,14 +851,15 @@ function gen5_estimation(count: number) {
 function gen5_fracMul(count: number) {
   return generateUnique(count, () => {
     const n1 = randInt(1, 5);
-    const d1 = randInt(n1 + 1, 8);
-    const whole = randInt(2, 9);
+    const d1 = randInt(n1 + 1, 9);
+    const whole = randInt(2, 6);
     const resultN = n1 * whole;
     return {
       key: `fracMul_${n1}/${d1}x${whole}`,
       instruction: "분수의 곱셈을 하세요.",
       question: `${n1}/${d1} × ${whole} = `,
       answer: `${resultN}/${d1}`,
+      equation: `\\frac{${n1}}{${d1}} \\times ${whole} = `,
     };
   });
 }
@@ -887,6 +894,7 @@ function gen6_fracDiv(count: number) {
       instruction: "분수의 나눗셈을 하세요.",
       question: `${numer}/${denom} ÷ ${divisor} = `,
       answer: `${numer / divisor}/${denom}`,
+      equation: `\\frac{${numer}}{${denom}} \\div ${divisor} = `,
     };
   });
 }
@@ -914,8 +922,9 @@ function gen6_ratio(count: number) {
     return {
       key: `ratio_${a}:${b}`,
       instruction: "비율을 분수로 나타내세요.",
-      question: `${a} : ${b} =/□`,
+      question: `${a} : ${b} =`,
       answer: `${a}/${b}`,
+      equation: `\\frac{${a}}{${b}}`,
     };
   });
 }
