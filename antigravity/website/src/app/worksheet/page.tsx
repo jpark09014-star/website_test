@@ -516,11 +516,12 @@ export default function WorksheetPage() {
                         {/* 7. 기타 렌더링 (일반 텍스트 + 선택적 KaTeX) */}
                         {(!problem.visual || (problem.visual.type !== "vertical_math" && problem.visual.type !== "fraction" && problem.visual.type !== "shape" && problem.visual.type !== "clock" && problem.visual.type !== "grouping")) && !(problem.choices && problem.choices.length > 0 && !problem.visual) && (
                            <div className="w-full flex flex-col items-center justify-center">
-                              <div className="text-sm leading-snug text-center">{problem.question}</div>
-                              {problem.equation && (
-                                <div className="mt-0.5 text-xs">
+                              {problem.equation ? (
+                                <div className="mt-0.5 text-lg">
                                   <MathRenderer equation={problem.equation} />
                                 </div>
+                              ) : (
+                                <div className="text-sm leading-snug text-center">{problem.question}</div>
                               )}
                               {showAnswers ? (
                                 <div className="text-[#2bee6c] mt-1 text-sm inline-block px-2 py-0.5 bg-[#effef5] rounded">{problem.answer}</div>

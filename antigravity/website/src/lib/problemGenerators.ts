@@ -535,7 +535,6 @@ function gen3_fracDecIntro(count: number) {
       instruction: "색칠된 부분을 분수로 나타내세요.",
       question: `전체 ${denom}칸 중 ${numer}칸 =`,
       answer: `${numer}/${denom}`,
-      equation: `\\frac{${numer}}{${denom}}`,
     };
   });
 }
@@ -924,7 +923,6 @@ function gen6_ratio(count: number) {
       instruction: "비율을 분수로 나타내세요.",
       question: `${a} : ${b} =`,
       answer: `${a}/${b}`,
-      equation: `\\frac{${a}}{${b}}`,
     };
   });
 }

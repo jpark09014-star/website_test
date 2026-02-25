@@ -11,7 +11,6 @@
 
 import { useMemo } from "react";
 import katex from "katex";
-import "katex/dist/katex.min.css";
 
 interface MathRendererProps {
   /** KaTeX 수식 문자열 (예: "\\frac{3}{4} + \\frac{1}{4}") */
