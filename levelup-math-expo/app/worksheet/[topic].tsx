@@ -6,6 +6,7 @@ import { generateProblems, Problem, Language } from '../../lib/problemGenerators
 import { saveStudyRecord, saveWrongNotes } from '../../lib/studyStorage';
 import { useTranslation } from 'react-i18next';
 import ShapeRenderer, { ShapeVisual } from '../../components/ShapeRenderer';
+import AdBanner from '../../components/AdBanner';
 
 export default function WorksheetScreen() {
   const params = useLocalSearchParams();
@@ -300,11 +301,12 @@ export default function WorksheetScreen() {
       </ScrollView>
 
 
-      {/* Floating Action Button */}
+      {/* 배너 광고 + 채점 버튼: 채점 전에만 표시 */}
       {!graded && (
-        <View className="absolute bottom-8 left-0 right-0 items-center">
+        <View className="absolute bottom-0 left-0 right-0 items-center pb-4">
+          <AdBanner className="w-full" />
           <TouchableOpacity 
-            className="bg-primary-main rounded-full py-4 px-8 flex-row items-center shadow-md shadow-primary-main/30"
+            className="bg-primary-main rounded-full py-4 px-8 flex-row items-center shadow-md shadow-primary-main/30 mt-2"
             onPress={handleGrade}
           >
             <Check size={20} color="white" />

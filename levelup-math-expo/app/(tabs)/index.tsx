@@ -5,6 +5,7 @@ import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { getStudyStats, StudyStats } from '../../lib/studyStorage';
+import AdBanner from '../../components/AdBanner';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -174,6 +175,9 @@ export default function HomeScreen() {
             <Text className="text-gray-400 text-[10px] text-center">{t('home.sessions_done')}</Text>
           </View>
         </View>
+
+        {/* 배너 광고 (학습 요약 카드 하단) */}
+        <AdBanner />
 
       </View>
     </ScrollView>
