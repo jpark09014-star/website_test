@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display, Noto_Serif_KR } from "next/font/google";
 import "./globals.css";
 import FaqConsultant from "@/components/chat/FaqConsultant";
 import Navbar from "@/components/ui/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const notoSerifKR = Noto_Serif_KR({
+  variable: "--font-noto-serif-kr",
   subsets: ["latin"],
+  weight: ['200', '300', '400', '500', '600', '700', '900'],
 });
 
 export const metadata: Metadata = {
@@ -36,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="ko" className="scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-burgundy-900 text-rosegold-200 overflow-x-hidden`}
+        className={`${playfair.variable} ${notoSerifKR.variable} font-sans antialiased bg-burgundy-900 text-rosegold-200 overflow-x-hidden`}
       >
         <Navbar />
         {children}

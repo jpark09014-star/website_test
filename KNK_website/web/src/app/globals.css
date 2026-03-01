@@ -11,8 +11,8 @@
   --color-rosegold-300: #E0BFB8;
   --color-rosegold-200: #F5EAE1;
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-noto-serif-kr), serif;
+  --font-serif: var(--font-playfair), serif;
 }
 
 @layer utilities {
