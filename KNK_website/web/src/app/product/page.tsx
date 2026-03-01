@@ -7,6 +7,10 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { Heart, ArrowRight, Leaf, ShieldCheck, Zap } from 'lucide-react';
 
 export default function ProductPage() {
+  const handleAddToCart = () => {
+    alert("장바구니에 상품을 담았습니다! 🥂");
+  };
+
   return (
     <main className="min-h-screen bg-[#2A0E13] text-[#F3E5DF] pt-20">
       
@@ -28,7 +32,10 @@ export default function ProductPage() {
             Experience the pinnacle of sun care. Our tone-up cream and portable sun stick blend high-performance protection with elegant aesthetics for the modern professional.
           </p>
           <div className="flex gap-4">
-            <button className="bg-[#B76E79] hover:bg-[#DCA58C] text-[#2A0E13] px-8 py-3 rounded-md text-sm font-semibold tracking-wide transition-colors">
+            <button 
+              onClick={handleAddToCart}
+              className="bg-[#B76E79] hover:bg-[#DCA58C] text-[#2A0E13] px-8 py-3 rounded-md text-sm font-semibold tracking-wide transition-colors"
+            >
               Shop Collection
             </button>
             <button className="bg-transparent border border-[#B76E79]/30 hover:border-[#B76E79] text-[#DCA58C] px-8 py-3 rounded-md text-sm font-medium tracking-wide transition-colors flex items-center gap-2">
@@ -108,7 +115,9 @@ export default function ProductPage() {
                 <span className="text-[10px] bg-[#3B131A] text-[#DCA58C] px-2 py-1 border border-[#B76E79]/20 rounded">SPF 50+</span>
                 <span className="text-[10px] bg-[#1A1F35] text-[#93A5C3] px-2 py-1 border border-[#93A5C3]/20 rounded">Brighten</span>
               </div>
-              <button className="w-full py-3 border border-[#B76E79]/30 hover:border-[#B76E79] hover:bg-[#B76E79]/5 text-[#F3E5DF] transition-all rounded text-sm font-medium">
+              <button 
+                onClick={handleAddToCart}
+                className="w-full py-3 border border-[#B76E79]/30 hover:border-[#B76E79] hover:bg-[#B76E79]/5 text-[#F3E5DF] transition-all rounded text-sm font-medium">
                 Add to Cart
               </button>
             </motion.div>
@@ -143,7 +152,9 @@ export default function ProductPage() {
                 <span className="text-[10px] bg-[#3B131A] text-[#DCA58C] px-2 py-1 border border-[#B76E79]/20 rounded">Portable</span>
                 <span className="text-[10px] bg-[#1A1F35] text-[#93A5C3] px-2 py-1 border border-[#93A5C3]/20 rounded">Matte Finish</span>
               </div>
-              <button className="w-full py-3 border border-[#B76E79]/30 hover:border-[#B76E79] hover:bg-[#B76E79]/5 text-[#F3E5DF] transition-all rounded text-sm font-medium">
+              <button 
+                onClick={handleAddToCart}
+                className="w-full py-3 border border-[#B76E79]/30 hover:border-[#B76E79] hover:bg-[#B76E79]/5 text-[#F3E5DF] transition-all rounded text-sm font-medium">
                 Add to Cart
               </button>
             </motion.div>
@@ -196,7 +207,10 @@ export default function ProductPage() {
           <p className="text-[#A68A7D] text-sm md:text-base mb-10">
             Secure your skin&apos;s future with KNK. Join thousands who have upgraded their sun care routine.
           </p>
-          <button className="bg-white hover:bg-gray-100 text-[#4A1523] px-8 py-3 rounded-md text-sm font-semibold tracking-wide transition-colors">
+          <button 
+            onClick={handleAddToCart}
+            className="bg-white hover:bg-gray-100 text-[#4A1523] px-8 py-3 rounded-md text-sm font-semibold tracking-wide transition-colors"
+          >
             Seamless Purchase
           </button>
         </div>
