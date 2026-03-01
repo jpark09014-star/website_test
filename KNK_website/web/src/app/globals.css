@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #2E0A12;
+  --color-foreground: #F5EAE1;
+  
+  --color-burgundy-900: #2E0A12;
+  --color-burgundy-800: #3B131A;
+  
+  --color-rosegold-500: #B76E79;
+  --color-rosegold-300: #E0BFB8;
+  --color-rosegold-200: #F5EAE1;
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@layer utilities {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 shadow-xl;
+  }
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
