@@ -68,16 +68,16 @@ function SuncreamModel(props: ThreeElements['group']) {
 
       {/* Labels */}
       <group position={[0, 0, 0.2]}>
-        <Text position={[0, 0.3, 0]} fontSize={0.15} color="#DCA58C" font="/fonts/PlayfairDisplay-Bold.ttf" anchorX="center" anchorY="middle" outlineWidth={0.002} outlineColor="#DCA58C">
+        <Text position={[0, 0.3, 0]} fontSize={0.15} color="#DCA58C" anchorX="center" anchorY="middle" outlineWidth={0.002} outlineColor="#DCA58C">
           KNK
         </Text>
-        <Text position={[0, -0.1, 0]} fontSize={0.06} color="#E0BFB8" font="/fonts/PlayfairDisplay-Regular.ttf" anchorX="center" anchorY="middle" letterSpacing={0.05} maxWidth={0.6} textAlign="center">
+        <Text position={[0, -0.1, 0]} fontSize={0.06} color="#E0BFB8" anchorX="center" anchorY="middle" letterSpacing={0.05} maxWidth={0.6} textAlign="center">
           AFTER-RAY
         </Text>
-        <Text position={[0, -0.22, 0]} fontSize={0.05} color="#E0BFB8" font="/fonts/PlayfairDisplay-Regular.ttf" anchorX="center" anchorY="middle" maxWidth={0.6} textAlign="center">
+        <Text position={[0, -0.22, 0]} fontSize={0.05} color="#E0BFB8" anchorX="center" anchorY="middle" maxWidth={0.6} textAlign="center">
           Tone-Up{"\n"}Protection Sun
         </Text>
-        <Text position={[0, -0.6, 0]} fontSize={0.035} color="#E0BFB8" font="/fonts/PlayfairDisplay-Regular.ttf" anchorX="center" anchorY="middle" letterSpacing={0.1}>
+        <Text position={[0, -0.6, 0]} fontSize={0.035} color="#E0BFB8" anchorX="center" anchorY="middle" letterSpacing={0.1}>
           SPF 50+ PA++++
         </Text>
       </group>
@@ -124,13 +124,13 @@ function SunstickModel(props: ThreeElements['group']) {
 
       {/* Labels */}
       <group position={[0, -0.45, 0.341]}>
-        <Text position={[0, 0.3, 0]} fontSize={0.15} color="#DCA58C" font="/fonts/PlayfairDisplay-Bold.ttf" anchorX="center" anchorY="middle" outlineWidth={0.002} outlineColor="#DCA58C">
+        <Text position={[0, 0.3, 0]} fontSize={0.15} color="#DCA58C" anchorX="center" anchorY="middle" outlineWidth={0.002} outlineColor="#DCA58C">
           KNK
         </Text>
-        <Text position={[0, -0.2, 0]} fontSize={0.05} color="#E0BFB8" font="/fonts/PlayfairDisplay-Regular.ttf" anchorX="center" anchorY="middle" letterSpacing={0.05} maxWidth={0.5} textAlign="center">
+        <Text position={[0, -0.2, 0]} fontSize={0.05} color="#E0BFB8" anchorX="center" anchorY="middle" letterSpacing={0.05} maxWidth={0.5} textAlign="center">
           Ampoule Treatment
         </Text>
-        <Text position={[0, -0.4, 0]} fontSize={0.035} color="#E0BFB8" font="/fonts/PlayfairDisplay-Regular.ttf" anchorX="center" anchorY="middle">
+        <Text position={[0, -0.4, 0]} fontSize={0.035} color="#E0BFB8" anchorX="center" anchorY="middle">
           30ml / 1.0 fl oz.
         </Text>
       </group>
